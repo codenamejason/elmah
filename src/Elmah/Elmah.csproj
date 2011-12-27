@@ -192,10 +192,16 @@
     </Compile>
     <Compile Include="ConnectionStringHelper.cs">
     </Compile>
+    <Compile Include="MasterPage.generated.cs">
+      <DependentUpon>MasterPage.cshtml</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Debug.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DictionaryExtensions.cs" />
+    <Compile Include="Elnumerable.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="Error.cs">
       <SubType>Code</SubType>
@@ -236,8 +242,11 @@
     <Compile Include="ErrorLogModule.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ErrorLogPage.cs">
-      <SubType>ASPXCodeBehind</SubType>
+    <Compile Include="ErrorLogPage.cs" />
+    <Compile Include="ErrorLogPage.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ErrorLogPage.cshtml</DependentUpon>
     </Compile>
     <Compile Include="ErrorLogPageFactory.cs">
       <SubType>Code</SubType>
@@ -278,6 +287,7 @@
     </Compile>
     <Compile Include="HtmlLinkType.cs">
     </Compile>
+    <Compile Include="HtmlString.cs" />
     <Compile Include="HttpModuleBase.cs">
     </Compile>
     <Compile Include="HttpModuleRegistry.cs">
@@ -310,6 +320,7 @@
     <Compile Include="PoweredBy.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RazorTemplateBase.cs" />
     <Compile Include="ReverseComparer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -348,6 +359,7 @@
     <Compile Include="TestException.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WebTemplateBase.cs" />
     <Compile Include="XmlFileErrorLog.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -365,6 +377,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="MasterPage.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>MasterPage.generated.cs</LastGenOutput>
+    </None>
+    <None Include="ErrorLogPage.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>ErrorLogPage.generated.cs</LastGenOutput>
+    </None>
     <None Include="MySql.sql" />
     <None Include="Pgsql.sql" />
   </ItemGroup>
