@@ -1,4 +1,4 @@
-#region License, Terms and Author(s)
+﻿#region License, Terms and Author(s)
 //
 // ELMAH - Error Logging Modules and Handlers for ASP.NET
 // Copyright (c) 2004-9 Atif Aziz. All rights reserved.
@@ -21,25 +21,22 @@
 //
 #endregion
 
-[assembly: Elmah.Scc("$Id: AboutPage.cs 566 2009-05-11 10:37:10Z azizatif $")]
-
 namespace Elmah
 {
     #region Imports
 
     using System;
-    using System.Reflection;
-    using System.Web.UI;
+    using System.Collections.Generic;
+    using System.Linq;
 
     #endregion
 
-    /// <summary>
-    /// Renders an HTML page that presents information about the version,
-    /// build configuration, source files as well as a method to check
-    /// for updates.
-    /// </summary>
-
-    partial class AboutPage
+    static class Elnumerable
     {
+        public static IEnumerable<KeyValuePair<int, T>> Index<T>(this IEnumerable<T> source)
+        {
+            if (source == null) throw new ArgumentNullException("source");
+            return source.Select((item, index) => new KeyValuePair<int, T>(index, item));
+        }
     }
 }

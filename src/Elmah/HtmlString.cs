@@ -21,25 +21,26 @@
 //
 #endregion
 
-[assembly: Elmah.Scc("$Id: AboutPage.cs 566 2009-05-11 10:37:10Z azizatif $")]
-
 namespace Elmah
 {
-    #region Imports
+    // http://msdn.microsoft.com/en-us/library/system.web.ihtmlstring.aspx
 
-    using System;
-    using System.Reflection;
-    using System.Web.UI;
-
-    #endregion
-
-    /// <summary>
-    /// Renders an HTML page that presents information about the version,
-    /// build configuration, source files as well as a method to check
-    /// for updates.
-    /// </summary>
-
-    partial class AboutPage
+    interface IHtmlString
     {
+        string ToHtmlString();
+    }
+
+    sealed class HtmlString : IHtmlString
+    {
+        private readonly string _html;
+
+        public HtmlString(string html)
+        {
+            _html = html;
+        }
+
+        public string ToHtmlString() { return _html; }
+
+        public override string ToString() { return ToHtmlString(); }
     }
 }
