@@ -48,7 +48,7 @@ namespace Elmah
         private const int _maxAppNameLength = 60;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlErrorLog"/> class
+        /// Initializes a new instance of the <see cref="PgsqlErrorLog"/> class
         /// using a dictionary of configured settings.
         /// </summary>
 
@@ -87,7 +87,7 @@ namespace Elmah
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlErrorLog"/> class
+        /// Initializes a new instance of the <see cref="PgsqlErrorLog"/> class
         /// to use a specific connection string for connecting to the database.
         /// </summary>
 
@@ -282,7 +282,7 @@ LIMIT @limit
             {
                 NpgsqlCommand command = new NpgsqlCommand();
                 command.CommandText = "SELECT COUNT(*) FROM Elmah_Error WHERE Application = @Application";
-				command.Parameters.Add("@Application", NpgsqlDbType.Text, _maxAppNameLength).Value = appName;
+                command.Parameters.Add("@Application", NpgsqlDbType.Text, _maxAppNameLength).Value = appName;
                 return command;
             }
         }
