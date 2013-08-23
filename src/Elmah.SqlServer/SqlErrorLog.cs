@@ -34,6 +34,9 @@ namespace Elmah
     using System.IO;
     using System.Text;
     using System.Threading;
+    #if !NET_3_5
+    using System.Threading.Tasks;
+    #endif
     using System.Xml;
 
     using IDictionary = System.Collections.IDictionary;
@@ -170,7 +173,7 @@ namespace Elmah
                 command.Connection = connection;
                 connection.Open();
 
-                string xml = ReadSingleXmlStringResult(command.ExecuteReader());
+                var xml = ReadSingleXmlStringResult(command.ExecuteReader());
                 ErrorsXmlToList(xml, errorEntryList);
 
                 int total;
@@ -211,6 +214,79 @@ namespace Elmah
                 return sb.ToString();
             }
         }
+        
+        #if !NET_3_5 && !NET_4_0 // i.e. Microsoft .NET Framework 4.5 and later
+
+        /// <summary>
+        /// Asynchronous version of <see cref="GetErrors"/>.
+        /// </summary>
+
+        public async override Task<int> GetErrorsAsync(int pageIndex, int pageSize, ICollection<ErrorLogEntry> errorEntryList, CancellationToken cancellationToken)
+        {
+            if (pageIndex < 0) throw new ArgumentOutOfRangeException("pageIndex", pageIndex, null);
+            if (pageSize < 0) throw new ArgumentOutOfRangeException("pageSize", pageSize, null);
+
+            var csb = new SqlConnectionStringBuilder(ConnectionString)
+            {
+                AsynchronousProcessing = true
+            };
+
+            using (var connection = new SqlConnection(csb.ConnectionString))
+            using (var command = Commands.GetErrorsXml(ApplicationName, pageIndex, pageSize))
+            {
+                command.Connection = connection;
+                await connection.OpenAsync(cancellationToken);
+
+                //
+                // See following MS KB article why the XML string is read 
+                // and reconstructed in chunks:
+                //
+                // The XML data row is truncated at 2,033 characters when you use the SqlDataReader object
+                // http://support.microsoft.com/kb/310378
+                // 
+                // When you read XML data from Microsoft SQL Server by using 
+                // the SqlDataReader object, the XML in the first column of 
+                // the first row is truncated at 2,033 characters. You 
+                // expect all of the contents of the XML data to be 
+                // contained in a single row and column. This behavior 
+                // occurs because, for XML results greater than 2,033 
+                // characters in length, SQL Server returns the XML in 
+                // multiple rows of 2,033 characters each. 
+                //
+                // See also comment 18 in issue 129:
+                // http://code.google.com/p/elmah/issues/detail?id=129#c18
+                //
+
+                List<string> chunks = null;
+                using (var reader = await command.ExecuteReaderAsync(cancellationToken))
+                    while (await reader.ReadAsync(cancellationToken))
+                        (chunks ?? (chunks = new List<string>())).Add(reader.GetString(0));
+
+                var xml = chunks != null && chunks.Count > 0 ? string.Join(null, chunks) : null;
+                ErrorsXmlToList(xml, errorEntryList);
+
+                int total;
+                Commands.GetErrorsXmlOutputs(command, out total);
+                return total;
+            }
+        }
+
+        #else // Microsoft .NET Framework 3.5 or 4.0
+
+        #if NET_4_0
+
+        /// <summary>
+        /// Asynchronous version of <see cref="GetErrors"/>.
+        /// </summary>
+
+        public override Task<int> GetErrorsAsync(int pageIndex, int pageSize, ICollection<ErrorLogEntry> errorEntryList, CancellationToken cancellationToken)
+        {
+            return Task.Factory.FromAsync<int, int, ICollection<ErrorLogEntry>, int>(
+                       BeginGetErrors, EndGetErrors, 
+                       pageIndex, pageSize, errorEntryList, null);
+        }
+
+        #endif
 
         /// <summary>
         /// Begins an asynchronous version of <see cref="GetErrors"/>.
@@ -257,7 +333,7 @@ namespace Elmah
                 using (connection)
                 using (command)
                 {
-                    string xml = ReadSingleXmlStringResult(command.EndExecuteReader(asyncResult.InnerResult));
+                    var xml = ReadSingleXmlStringResult(command.EndExecuteReader(asyncResult.InnerResult));
                     ErrorsXmlToList(xml, errorEntryList);
                     int total;
                     Commands.GetErrorsXmlOutputs(command, out total);
@@ -292,6 +368,8 @@ namespace Elmah
             }
         }
 
+        #endif // NET_3_5 || NET_4_0
+
         private void ErrorsXmlToList(string xml, ICollection<ErrorLogEntry> errorEntryList)
         {
             if (xml == null || xml.Length == 0) 
@@ -301,7 +379,7 @@ namespace Elmah
             settings.CheckCharacters = false;
             settings.ConformanceLevel = ConformanceLevel.Fragment;
 
-            using (XmlReader reader = XmlReader.Create(new StringReader(xml), settings))
+            using (var reader = XmlReader.Create(new StringReader(xml), settings))
                 ErrorsXmlToList(reader, errorEntryList);
         }
 
@@ -424,7 +502,7 @@ namespace Elmah
             {
                 var command = new SqlCommand("ELMAH_GetErrorsXml") { CommandType = CommandType.StoredProcedure };
 
-                SqlParameterCollection parameters = command.Parameters;
+                var parameters = command.Parameters;
 
                 parameters.Add("@Application", SqlDbType.NVarChar, _maxAppNameLength).Value = appName;
                 parameters.Add("@PageIndex", SqlDbType.Int).Value = pageIndex;

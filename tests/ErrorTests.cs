@@ -21,22 +21,26 @@
 //
 #endregion
 
-namespace Elmah
+namespace Elmah.Tests
 {
     #region Imports
 
     using System;
-    using System.Collections.Generic;
     using System.Linq;
+    using Mannex;
+    using Xunit;
 
     #endregion
 
-    static class Elnumerable
+    public class ErrorTests
     {
-        public static IEnumerable<KeyValuePair<int, T>> Index<T>(this IEnumerable<T> source)
+        [Fact]
+        public void CallerInfoFromExceptionDataBecomesFirstLineOfDetail()
         {
-            if (source == null) throw new ArgumentNullException("source");
-            return source.Select((item, index) => KeyValuePair.Create(index, item));
+            var e = new Exception();
+            e.TrySetCallerInfo(new CallerInfo("foobar", "baz.cs", 42));
+            var error = new Error(e);
+            Assert.Equal("# caller: foobar@baz.cs:42", error.Detail.SplitIntoLines().First());
         }
     }
 }
