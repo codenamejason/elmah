@@ -21,27 +21,40 @@
 //
 #endregion
 
+#if !NET_3_5 && !NET_4_0
+
 namespace Elmah
 {
     #region Imports
 
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using MoreLinq;
+    using System.Threading.Tasks;
+    using System.Web;
 
     #endregion
 
-    static class TypeExtensions
+    sealed class DelegatingHttpTaskAsyncHandler : HttpTaskAsyncHandler
     {
-        public static IEnumerable<KeyValuePair<string, object>> GetEnumMembers(this Type type)
-        {
-            if (type == null) throw new ArgumentNullException("type");
-            if (!type.IsEnum) throw new ArgumentException(null, "type");
+        readonly Func<HttpContextBase, Task> _delegatee;
 
-            var names = Enum.GetNames(type);
-            return from v in Enum.GetValues(type).Cast<object>().Index()
-                   select KeyValuePair.Create(names[v.Key], v.Value);
+        public DelegatingHttpTaskAsyncHandler(Func<HttpContextBase, Task> delegatee)
+        {
+            if (delegatee == null) throw new ArgumentNullException("delegatee");
+            _delegatee = delegatee;
+        }
+
+        public override void ProcessRequest(HttpContext context)
+        {
+            // Because the base implementation throws NotSupportedException 
+            // and there's no seemingly good reason not to support it.
+            ProcessRequestAsync(context).Wait();
+        }
+
+        public override Task ProcessRequestAsync(HttpContext context)
+        {
+            return _delegatee(new HttpContextWrapper(context));
         }
     }
 }
+
+#endif

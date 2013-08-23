@@ -4,7 +4,7 @@
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C92DC151-A0BA-4A5E-A20E-620EC9C06AFF}</ProjectGuid>
+    <ProjectGuid>{BF80CAB4-F68D-40F6-B4E1-DB6D47808EB7}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>
@@ -28,7 +28,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -44,20 +44,21 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <BaseIntermediateOutputPath>obj\net-3.5\</BaseIntermediateOutputPath>
-    <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
+    <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <BaseIntermediateOutputPath>obj\net-4.5\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\bin\net-3.5\Debug\</OutputPath>
+    <OutputPath>..\..\bin\net-4.5\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG;NET_3_5</DefineConstants>
-    <DocumentationFile>xmldoc\net-3.5\Elmah.xml</DocumentationFile>
+    <DefineConstants>TRACE;DEBUG;NET_4_5</DefineConstants>
+    <DocumentationFile>xmldoc\net-4.5\Elmah.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -70,16 +71,17 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\bin\net-3.5\Release\</OutputPath>
+    <OutputPath>..\..\bin\net-4.5\Release\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;NET_3_5</DefineConstants>
-    <DocumentationFile>xmldoc\net-3.5\Elmah.xml</DocumentationFile>
+    <DefineConstants>TRACE;NET_4_5</DefineConstants>
+    <DocumentationFile>xmldoc\net-4.5\Elmah.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -92,6 +94,7 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.JScript" />
@@ -104,9 +107,7 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.configuration" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -200,7 +201,6 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="DelegatingHttpTaskAsyncHandler.cs" />
-    <Compile Include="ExceptionExtensions.cs" />
     <Compile Include="ErrorMailHtmlPage.generated.cs">
       <DependentUpon>ErrorMailHtmlPage.cshtml</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -210,13 +210,13 @@
     <Compile Include="DbProviderFactoryQuery.cs" />
     <Compile Include="DelegatingDisposable.cs" />
     <Compile Include="ErrorMailHtmlPage.cs" />
+    <Compile Include="ExceptionExtensions.cs" />
     <Compile Include="HttpRequestValidation.cs" />
     <Compile Include="KeyValuePair.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MoreLinq\MoreEnumerable.Index.cs" />
     <Compile Include="MoreLinq\MoreEnumerable.Pairwise.cs" />
     <Compile Include="MoreLinq\MoreEnumerable.ToDelimitedString.cs" />
-    <Compile Include="MoreLinq\MoreEnumerable.ToDelimitedString.g.cs" />
     <Compile Include="StackTraceParser.cs" />
     <Compile Include="StyleSheetHelper.cs" />
     <Compile Include="TypeExtensions.cs" />
@@ -424,7 +424,6 @@
       <Generator>RazorGenerator</Generator>
       <LastGenOutput>ErrorLogPage.generated.cs</LastGenOutput>
     </None>
-    <None Include="packages.config" />
     <None Include="Pgsql.sql" />
   </ItemGroup>
   <ItemGroup>

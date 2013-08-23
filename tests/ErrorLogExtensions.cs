@@ -21,27 +21,29 @@
 //
 #endregion
 
-namespace Elmah
+namespace Elmah.Tests
 {
     #region Imports
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using MoreLinq;
+    using Xunit;
 
     #endregion
 
-    static class TypeExtensions
+    /// <summary>
+    /// Extension methods for <see cref="ErrorLog"/>.
+    /// </summary>
+    
+    static class ErrorLogExtensions
     {
-        public static IEnumerable<KeyValuePair<string, object>> GetEnumMembers(this Type type)
+        public static ErrorLogEntry GetLastError(this ErrorLog errorLog)
         {
-            if (type == null) throw new ArgumentNullException("type");
-            if (!type.IsEnum) throw new ArgumentException(null, "type");
-
-            var names = Enum.GetNames(type);
-            return from v in Enum.GetValues(type).Cast<object>().Index()
-                   select KeyValuePair.Create(names[v.Key], v.Value);
+            if (errorLog == null) throw new ArgumentNullException("errorLog");
+            var errors = new List<ErrorLogEntry>();
+            Assert.Equal(1, errorLog.GetErrors(0, 1, errors));
+            return errors.FirstOrDefault();
         }
     }
 }

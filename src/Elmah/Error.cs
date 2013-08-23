@@ -33,6 +33,7 @@ namespace Elmah
     using System.Security.Principal;
     using System.Web;
     using System.Xml;
+    using Mannex;
     using Thread = System.Threading.Thread;
     using NameValueCollection = System.Collections.Specialized.NameValueCollection;
 
@@ -132,11 +133,25 @@ namespace Elmah
                 }
 
                 var request = context.Request;
+                var qsfc = request.TryGetUnvalidatedCollections((form, qs, cookies) => new
+                {
+                    QueryString = qs,
+                    Form = form, 
+                    Cookies = cookies,
+                });
 
                 _serverVariables = CopyCollection(request.ServerVariables);
-                _queryString = CopyCollection(request.QueryString);
-                _form = CopyCollection(request.Form);
-                _cookies = CopyCollection(request.Cookies);
+                _queryString = CopyCollection(qsfc.QueryString);
+                _form = CopyCollection(qsfc.Form);
+                _cookies = CopyCollection(qsfc.Cookies);
+            }
+
+            var callerInfo = e.TryGetCallerInfo() ?? CallerInfo.Empty;
+            if (!callerInfo.IsEmpty)
+            {
+                _detail = "# caller: " + callerInfo
+                        + System.Environment.NewLine
+                        + _detail;
             }
         }
 
