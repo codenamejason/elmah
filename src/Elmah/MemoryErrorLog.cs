@@ -95,6 +95,7 @@ namespace Elmah
                 throw new ArgumentOutOfRangeException("size", size, string.Format("Size must be between 0 and {0}.", MaximumSize));
 
             _size = size;
+            _entries = new EntryCollection(_size);
         }
 
         /// <summary>
@@ -122,6 +123,8 @@ namespace Elmah
                     _size = Math.Max(0, Math.Min(MaximumSize, _size));
                 }
             }
+
+            _entries = new EntryCollection(_size);
         }
 
         /// <summary>
@@ -234,7 +237,7 @@ namespace Elmah
 
                 totalCount = _entries.Count;
 
-                var startIndex = totalCount - ((pageIndex + 1) * pageSize);
+                var startIndex = totalCount - ((pageIndex + 1) * Math.Min(pageSize, totalCount));
                 var endIndex = Math.Min(startIndex + pageSize, totalCount);
                 var count = Math.Max(0, endIndex - startIndex);
                 
@@ -292,7 +295,7 @@ namespace Elmah
                     RemoveAt(0);
                     index--;
                 }
-                base.InsertItem(index, item);
+                base.InsertItem(index-sub, item);
             }
         }
     }
